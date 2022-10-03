@@ -11,13 +11,13 @@ import com.alsa.menuapp.model.Role;
 import com.alsa.menuapp.repository.RoleRespository;
 
 @RestController
-@RequestMapping("/api/v1/roles")
+@RequestMapping("/api")
 public class RoleController {
 
     @Autowired
     private RoleRespository roleRespository;    
 
-    @GetMapping()
+    @GetMapping("roles")
     public List<Role> getAllRoles(){
         return roleRespository.findAll();
     }

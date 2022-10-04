@@ -1,7 +1,7 @@
 package com.alsa.menuapp.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,16 +10,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Users")
 public class User {
@@ -46,16 +48,15 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany
-    @JoinTable(name = "role_user", 
+    @ManyToMany
+    @JoinTable(name = "users_roles", 
         joinColumns = @JoinColumn(name = "user_id"), 
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles = new ArrayList<Role>();
+    private Set<Role> roles = new HashSet<Role>();
 
     public void addRole(Role role){
         this.roles.add(role);
-        role.getUsers().add(this);
     }
 
     public void addRole(int id){
@@ -69,7 +70,6 @@ public class User {
         Role existingRole = this.roles.stream().filter(role -> role.getId() == id).findFirst().orElse(null);
         if (existingRole != null){
             this.roles.remove(existingRole);
-            existingRole.getUsers().remove(this);
         }
     }
 

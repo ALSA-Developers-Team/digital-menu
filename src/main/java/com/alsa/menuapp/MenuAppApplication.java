@@ -1,5 +1,7 @@
 package com.alsa.menuapp;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,38 +12,32 @@ import com.alsa.menuapp.model.User;
 import com.alsa.menuapp.repository.RoleRespository;
 import com.alsa.menuapp.repository.UserRepository;
 
+
 @SpringBootApplication
 public class MenuAppApplication implements CommandLineRunner {
-	
 	@Autowired
-	private RoleRespository roleRespository;
+	RoleRespository repoRole;
+
 	@Autowired
-	private UserRepository userRepository;
+	UserRepository repoUser;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MenuAppApplication.class, args);
 	}
 
 	public void run(String... args) throws Exception{
-		// Role role = new Role();
-		User user = new User("Test2", "1234", 4);
+		Role user = new Role("user");
+		Role admin = new Role("admin");
+		Role customer = new Role("customer");
+		repoRole.saveAll(List.of(user, admin, customer));
+		List<Role> lRoles = repoRole.findAll();
+		System.out.println(lRoles);
 
-
-		// role.setName("TEST");
-
-		// roleRespository.save(role);
-
-		// user.setUsername("Tets");
-		// user.setPassword("1234");
-
-		// user.addRole(role);
-
-		userRepository.save(user);
-		// Role role = roleRespository.findById(4).orElse(null);
-
-		// System.out.println(role.getUsers().get(0).toString());
-
-		
+		User newUser = new User("TEST", "1234");
+		Role roleUser = repoRole.findByName("user");
+		newUser.addRole(roleUser);
+		User savedUser = repoUser.save(newUser);
+		System.out.println(savedUser);
 	}
 
 }

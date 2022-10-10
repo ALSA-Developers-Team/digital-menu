@@ -21,13 +21,13 @@ public class UserController{
   @Autowired
   UserService userService;
 
-  @GetMapping("/")
+  @GetMapping()
   @Description(value = "returns a list of all users")
   public ResponseEntity<List<User>> getAllUsers() {
     return ResponseEntity.ok().body(userService.getUsers());
   }
 
-  @PostMapping("/save")
+  @PostMapping()
   @Description(value = "saves a new user given a user by the body")
   public ResponseEntity<User> saveUser(@RequestBody User user) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());

@@ -2,6 +2,7 @@ package com.alsa.menuapp.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
@@ -29,12 +30,18 @@ public class UserController{
 
   @PostMapping()
   @Description(value = "saves a new user given a user by the body")
-  public ResponseEntity<User> saveUser(@RequestBody User user) {
+  public ResponseEntity<User> saveUser(@RequestBody User user, @RequestParam(value = "roleName", required = true) String roleName) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());
-    return ResponseEntity.created(uri).body(userService.saveUser(user));
+    return ResponseEntity.created(uri).body(userService.saveUser(user, roleName));
   }
 
-  @PostMapping("/roles/save")
+  @DeleteMapping()
+  @Description(value = "deletes a user given an id by params")
+  public ResponseEntity<Integer> deleteUser(@RequestParam(value = "userId", required = true) String id) {
+    return ResponseEntity.ok().body(userService.deleteUser(Integer.parseInt(id)));
+  }
+
+  @PostMapping("/roles")
   @Description(value = "saves a new role given a role by the body")
   public ResponseEntity<Role> saveRole(@RequestBody Role role) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());

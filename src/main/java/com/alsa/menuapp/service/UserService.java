@@ -3,6 +3,8 @@ package com.alsa.menuapp.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -61,7 +63,7 @@ public class UserService implements UserDetailsService{
      * @return {user}
      * @throws ResourceAlreadyExistsException
      */
-    public User saveUser(User user) throws ResourceAlreadyExistsException{
+    public User saveUser(User user, String roleName) throws ResourceAlreadyExistsException{
         User existsUser = userRepo.findByUsername(user.getUsername());
         if(existsUser != null){
             throw new ResourceAlreadyExistsException("user already exists"); 
@@ -69,7 +71,25 @@ public class UserService implements UserDetailsService{
 
         log.info("Saving new user {} to the database", user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepo.save(user);
+
+        User newUser = userRepo.save(user);
+        addRoleToUser(newUser.getUsername(), roleName);
+        return newUser;
+    }
+
+    /**
+     * deletes user from database
+     * @param id - user id
+     * @return {user}
+     * @throws ResourceNotFoundException
+     */
+    public int deleteUser(int id) throws ResourceNotFoundException{
+        boolean existsUser = userRepo.existsById(id);
+        if(!existsUser) throw new ResourceNotFoundException("user does not exists");
+        
+        log.info("deleting user with id: {} from database", id);
+        userRepo.deleteById(id);
+        return id;
     }
 
     /**
@@ -100,6 +120,8 @@ public class UserService implements UserDetailsService{
 
         if(user == null) throw new ResourceNotFoundException("user not found");
         if(role == null) throw new ResourceNotFoundException("role not found");
+        Set<Role> roles = user.getRoles();
+        if(roles.contains(role)) throw new ResourceAlreadyExistsException("user already has this role");
 
         user.addRole(role);
     }
@@ -121,5 +143,23 @@ public class UserService implements UserDetailsService{
     public List<User> getUsers(){
         log.info("Fethcing all users");
         return userRepo.findAll();
+    }
+
+    /**
+     * fetchs role from database
+     * @return role instance
+     */
+    public Role getRole(String roleName){
+        log.info("Fethcing all roles");
+        return roleRepo.findByName(roleName);
+    }
+
+    /**
+     * retrieves a list of all roles from database
+     * @return a list of roles {List<Role>}
+     */
+    public List<Role> getRoles(){
+        log.info("Fethcing all roles");
+        return roleRepo.findAll();
     }
 }

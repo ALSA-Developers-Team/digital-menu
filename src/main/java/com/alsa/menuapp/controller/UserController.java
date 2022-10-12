@@ -2,7 +2,6 @@ package com.alsa.menuapp.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
@@ -28,17 +27,23 @@ public class UserController{
     return ResponseEntity.ok().body(userService.getUsers());
   }
 
-  @PostMapping()
+  @PostMapping("/{roleName}")
   @Description(value = "saves a new user given a user by the body")
-  public ResponseEntity<User> saveUser(@RequestBody User user, @RequestParam(value = "roleName", required = true) String roleName) {
+  public ResponseEntity<User> saveUser(@RequestBody User user, @PathVariable String roleName) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());
     return ResponseEntity.created(uri).body(userService.saveUser(user, roleName));
   }
 
-  @DeleteMapping()
+  @DeleteMapping("/{id}")
   @Description(value = "deletes a user given an id by params")
-  public ResponseEntity<Integer> deleteUser(@RequestParam(value = "userId", required = true) String id) {
+  public ResponseEntity<Integer> deleteUser(@PathVariable String id) {
     return ResponseEntity.ok().body(userService.deleteUser(Integer.parseInt(id)));
+  }
+
+  @GetMapping("/roles")
+  @Description(value = "returns a list of all roles")
+  public ResponseEntity<List<Role>> getAllRoles() {
+    return ResponseEntity.ok().body(userService.getRoles());
   }
 
   @PostMapping("/roles")
@@ -46,6 +51,20 @@ public class UserController{
   public ResponseEntity<Role> saveRole(@RequestBody Role role) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());
     return ResponseEntity.created(uri).body(userService.saveRole(role));
+  }
+
+  @DeleteMapping("/roles/{id}")
+  @Description(value = "deletes a role given an id by params")
+  public ResponseEntity<?> deleteRole(@PathVariable String id) {
+    userService.deleteRole(Integer.parseInt(id));
+    return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/{userId}/roles/{roleId}")
+  @Description(value = "deletes a role from user given an user id and role id by params")
+  public ResponseEntity<?> deleteRoleFromUser(@PathVariable String userId, @PathVariable String roleId) {
+    userService.removeRoleFromUser(Integer.parseInt(userId), Integer.parseInt(roleId));
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/roles/addtouser")

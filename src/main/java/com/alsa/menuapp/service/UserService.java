@@ -3,7 +3,6 @@ package com.alsa.menuapp.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ public class UserService implements UserDetailsService{
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
         if(user == null){
-            log.error("user not found");
+            log.error("user with username: {} not found", username);
             throw new UsernameNotFoundException("User not found in database");
         }else{
             log.info("User found in database", username);
@@ -66,6 +65,7 @@ public class UserService implements UserDetailsService{
     public User saveUser(User user, String roleName) throws ResourceAlreadyExistsException{
         User existsUser = userRepo.findByUsername(user.getUsername());
         if(existsUser != null){
+            log.info("user: {} already exists", user);
             throw new ResourceAlreadyExistsException("user already exists"); 
         }
 
@@ -85,7 +85,10 @@ public class UserService implements UserDetailsService{
      */
     public int deleteUser(int id) throws ResourceNotFoundException{
         boolean existsUser = userRepo.existsById(id);
-        if(!existsUser) throw new ResourceNotFoundException("user does not exists");
+        if(!existsUser){
+            log.info("user with id: {} does not exists", id);
+            throw new ResourceNotFoundException("user does not exists");
+        }
         
         log.info("deleting user with id: {} from database", id);
         userRepo.deleteById(id);
@@ -101,6 +104,7 @@ public class UserService implements UserDetailsService{
     public Role saveRole(Role role) throws ResourceAlreadyExistsException{
         Role existsRole = roleRepo.findByName(role.getName());
         if(existsRole != null){
+            log.info("failed to complete operation, role: {} already exists", role);
             throw new ResourceAlreadyExistsException("role already exists");
         }
 
@@ -109,17 +113,40 @@ public class UserService implements UserDetailsService{
     }
 
     /**
-     * ads a role to a user from database
-     * @param username username {String}
-     * @param roleName rolename {String}
+     * deletes role from database
+     * @param roleId - role id
+     * @throws ResourceNotFoundException
+     */
+    public void deleteRole(int roleId) throws ResourceNotFoundException{
+        Role existsRole = roleRepo.findById(roleId).orElse(null);
+        if(existsRole == null){
+            log.info("failed to complete operation, role with id: {} does not exists", roleId);
+            throw new ResourceNotFoundException("role does not exists");
+        }
+
+        log.info("deleting role {} from database", roleId);
+        roleRepo.delete(existsRole);
+    }
+
+    /**
+     * adds role to user from database
+     * @param username - username
+     * @param roleName - role name
+     * @throws ResourceNotFoundException
      */
     public void addRoleToUser(String username, String roleName) throws ResourceNotFoundException{
         log.info("Adding new role {} to user {}", roleName, username);
         User user = userRepo.findByUsername(username);
         Role role = roleRepo.findByName(roleName);
 
-        if(user == null) throw new ResourceNotFoundException("user not found");
-        if(role == null) throw new ResourceNotFoundException("role not found");
+        if(user == null) {
+            log.info("no user found with username: {}", username);
+            throw new ResourceNotFoundException("user not found");
+        } 
+        if(role == null){
+            log.info("no role found with role name: {}", roleName);
+            throw new ResourceNotFoundException("role not found");
+        } 
         Set<Role> roles = user.getRoles();
         if(roles.contains(role)) throw new ResourceAlreadyExistsException("user already has this role");
 
@@ -127,13 +154,30 @@ public class UserService implements UserDetailsService{
     }
 
     /**
-     * fetchs user from database given a username
-     * @param username username {String}
-     * @return User instance
+     * removes role from user from database
+     * @param userId - user id
+     * @param roleId - role id
+     * @throws ResourceNotFoundException
      */
-    public User getUser(String username){
-        log.info("Fetching user {}", username);
-        return userRepo.findByUsername(username);
+    public void removeRoleFromUser(int userId, int roleId) throws ResourceNotFoundException{
+        User user = userRepo.findById(userId).orElse(null);
+        Role role = roleRepo.findById(roleId).orElse(null);
+        if(user == null){
+            log.info("failed to complete operation, user with id: {} does not exists", userId);
+        }
+        if(role == null){
+            log.info("failed to complete operation, role with id: {} does not exists", roleId);
+            throw new ResourceNotFoundException("role does not exists");
+        }
+
+        log.info("deleting role {} from database", roleId);
+        Set<Role> roles = user.getRoles(); //nunca va a ser null porque cuando se guarda el usuario se asigna un role por defecto
+        if(roles.contains(role)){
+            roles.remove(role);
+            user.setRoles(roles);
+        }
+        
+        userRepo.save(user);
     }
 
     /**
@@ -141,17 +185,8 @@ public class UserService implements UserDetailsService{
      * @return a list of users {List<User>}
      */
     public List<User> getUsers(){
-        log.info("Fethcing all users");
+        log.info("Fetching all users");
         return userRepo.findAll();
-    }
-
-    /**
-     * fetchs role from database
-     * @return role instance
-     */
-    public Role getRole(String roleName){
-        log.info("Fethcing all roles");
-        return roleRepo.findByName(roleName);
     }
 
     /**

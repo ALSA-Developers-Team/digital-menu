@@ -7,5 +7,6 @@ import com.alsa.menuapp.model.TableSection;
 
 @Repository
 public interface TableSectionRepository extends JpaRepository<TableSection, Integer>{
-    
+ 
+    TableSection findByName(String tableSectionName);
 }

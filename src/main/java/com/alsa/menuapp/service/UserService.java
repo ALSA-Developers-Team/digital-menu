@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService{
      * @return {user}
      * @throws ResourceAlreadyExistsException
      */
-    public User saveUser(User user, String roleName) throws ResourceAlreadyExistsException{
+    public User saveUser(User user) throws ResourceAlreadyExistsException{
         User existsUser = userRepo.findByUsername(user.getUsername());
         if(existsUser != null){
             log.info("user: {} already exists", user);
@@ -73,7 +73,7 @@ public class UserService implements UserDetailsService{
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User newUser = userRepo.save(user);
-        addRoleToUser(newUser.getUsername(), roleName);
+        addRoleToUser(newUser.getUsername(), "user");
         return newUser;
     }
 

@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alsa.menuapp.model.Role;
-import com.alsa.menuapp.repository.RoleRespository;
+import com.alsa.menuapp.service.UserService;
 
 @RestController
 @RequestMapping("/api")
 public class RoleController {
 
     @Autowired
-    private RoleRespository roleRespository;    
+    private UserService userService;    
 
-    @GetMapping("roles")
+    @GetMapping("/roles")
     public List<Role> getAllRoles(){
-        return roleRespository.findAll();
+        return userService.getRoles();
     }
 }

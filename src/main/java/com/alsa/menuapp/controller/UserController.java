@@ -27,11 +27,11 @@ public class UserController{
     return ResponseEntity.ok().body(userService.getUsers());
   }
 
-  @PostMapping("/{roleName}")
+  @PostMapping()
   @Description(value = "saves a new user given a user by the body")
-  public ResponseEntity<User> saveUser(@RequestBody User user, @PathVariable String roleName) {
+  public ResponseEntity<User> saveUser(@RequestBody User user) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());
-    return ResponseEntity.created(uri).body(userService.saveUser(user, roleName));
+    return ResponseEntity.created(uri).body(userService.saveUser(user));
   }
 
   @DeleteMapping("/{id}")
@@ -49,7 +49,7 @@ public class UserController{
   @PostMapping("/roles")
   @Description(value = "saves a new role given a role by the body")
   public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-    URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());
+    URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/roles/save").toUriString());
     return ResponseEntity.created(uri).body(userService.saveRole(role));
   }
 

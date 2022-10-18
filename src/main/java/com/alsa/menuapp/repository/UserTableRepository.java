@@ -8,4 +8,5 @@ import com.alsa.menuapp.model.UserTable;
 @Repository
 public interface UserTableRepository extends JpaRepository<UserTable, Integer>{
     
+    
 }

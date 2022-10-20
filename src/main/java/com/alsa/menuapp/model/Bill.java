@@ -1,6 +1,6 @@
 package com.alsa.menuapp.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +29,7 @@ public class Bill {
     private int id;
 
     @Column(name = "date", nullable = false)
-    private LocalDate date;
+    private Date date;
 
     @Column(name = "ammount", nullable = false)
     private Double ammount;

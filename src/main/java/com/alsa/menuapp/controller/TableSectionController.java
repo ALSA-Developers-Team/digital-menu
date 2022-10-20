@@ -40,7 +40,7 @@ public class TableSectionController {
     @PostMapping()
     @Description(value = "saves a new table section given a table section by the body")
     public ResponseEntity<TableSection> saveUser(@RequestBody TableSection tSection) {
-      URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/save").toUriString());
+      URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/resaurant/tableSections").toUriString());
       return ResponseEntity.created(uri).body(tSectionService.saveTableSection(tSection));
     }
 
@@ -51,8 +51,8 @@ public class TableSectionController {
     }
 
     @DeleteMapping("/{id}")
-    @Description(value = "deletes a user given an id by params")
-    public ResponseEntity<Integer> deleteUser(@PathVariable int id) {
+    @Description(value = "deletes a table given an id by path variable")
+    public ResponseEntity<Integer> deleteTableSection(@PathVariable int id) {
         tSectionService.deleteTableSection(id);
         return ResponseEntity.ok().body(id);
     }

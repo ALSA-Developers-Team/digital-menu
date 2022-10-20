@@ -1,6 +1,6 @@
 package com.alsa.menuapp.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +29,7 @@ public class Order {
     private int id;
 
     @Column(name = "place_date", nullable = false)
-    private LocalDate placeDate;
+    private Date placeDate;
 
     @Column(name = "ammount", nullable = false)
     private double ammount;

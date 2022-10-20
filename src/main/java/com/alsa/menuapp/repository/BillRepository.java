@@ -7,5 +7,5 @@ import com.alsa.menuapp.model.Bill;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Integer>{
-    
+
 }

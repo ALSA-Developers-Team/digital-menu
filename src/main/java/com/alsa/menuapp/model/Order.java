@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -34,10 +35,15 @@ public class Order {
     @Column(name = "ammount", nullable = false)
     private double ammount;
 
-    @Column(name = "status", nullable = false)
-    private String status;
+    @OneToOne
+    @JoinColumn(name = "chef", nullable = true, referencedColumnName = "id")
+    private User chef;
+
+    @OneToOne
+    @JoinColumn(name = "status", nullable = false, referencedColumnName = "id")
+    private Status status;
 
     @ManyToOne
-    @JoinColumn(name="bill_id", nullable=false, referencedColumnName = "id")
+    @JoinColumn(name="bill_id", nullable=true, referencedColumnName = "id")
     private Bill bill;
 }

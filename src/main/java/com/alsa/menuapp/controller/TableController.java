@@ -39,7 +39,7 @@ public class TableController {
 
     @PostMapping()
     @Description(value = "saves a new table given a table by the body")
-    public ResponseEntity<UserTable> saveUser(@RequestBody UserTable table) {
+    public ResponseEntity<UserTable> saveTable(@RequestBody UserTable table) {
       URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/restaurant/tables").toUriString());
       return ResponseEntity.created(uri).body(tService.saveTable(table));
     }

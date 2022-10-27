@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import com.alsa.menuapp.exception.ResourceNotFoundException;
+import com.alsa.menuapp.exception.UpdateFaildeException;
 import com.alsa.menuapp.model.Order;
 import com.alsa.menuapp.repository.OrderRepository;
 
@@ -54,8 +55,13 @@ public class OrderService {
         }
         fields.forEach((key, value) -> {
             Field field = ReflectionUtils.findField(Order.class, (String) key);
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, existsOrder, value);
+            if(field != null){
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, existsOrder, value);
+            }else{
+                log.error("error happened while updating order with id: {}", id);
+                throw new UpdateFaildeException("error while updating");
+            }
         });
         
         return orderRepo.save(existsOrder);

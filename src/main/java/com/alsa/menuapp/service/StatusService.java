@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import com.alsa.menuapp.exception.ResourceNotFoundException;
+import com.alsa.menuapp.exception.UpdateFaildeException;
 import com.alsa.menuapp.model.Status;
 import com.alsa.menuapp.repository.StatusRepository;
 
@@ -54,8 +55,13 @@ public class StatusService {
         }
         fields.forEach((key, value) -> {
             Field field = ReflectionUtils.findField(Status.class, (String) key);
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, existsStatus, value);
+            if(field != null){
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, existsStatus, value);
+            }else{
+                log.error("error happened while updating status with id: {}", id);
+                throw new UpdateFaildeException("error while updating");
+            }
         });
         
         return statusRepo.save(existsStatus);

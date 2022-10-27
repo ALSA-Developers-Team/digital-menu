@@ -164,6 +164,7 @@ public class UserService implements UserDetailsService{
         Role role = roleRepo.findById(roleId).orElse(null);
         if(user == null){
             log.info("failed to complete operation, user with id: {} does not exists", userId);
+            throw new ResourceNotFoundException("user does not exists");
         }
         if(role == null){
             log.info("failed to complete operation, role with id: {} does not exists", roleId);
@@ -171,7 +172,7 @@ public class UserService implements UserDetailsService{
         }
 
         log.info("deleting role {} from database", roleId);
-        Set<Role> roles = user.getRoles(); //nunca va a ser null porque cuando se guarda el usuario se asigna un role por defecto
+        Set<Role> roles = user.getRoles();
         if(roles.contains(role)){
             roles.remove(role);
             user.setRoles(roles);

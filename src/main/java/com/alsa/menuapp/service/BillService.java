@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import com.alsa.menuapp.exception.ResourceNotFoundException;
+import com.alsa.menuapp.exception.UpdateFaildeException;
 import com.alsa.menuapp.model.Bill;
 import com.alsa.menuapp.repository.BillRepository;
 
@@ -56,8 +57,13 @@ public class BillService {
         }
         fields.forEach((key, value) -> {
             Field field = ReflectionUtils.findField(Bill.class, (String) key);
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, existsBill, value);
+            if(field != null){
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, existsBill, value);
+            }else{
+                log.error("error happened while updating bill with id: {}", id);
+                throw new UpdateFaildeException("error while updating");
+            }
         });
         
         return billRepo.save(existsBill);

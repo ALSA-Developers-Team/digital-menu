@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
+import com.alsa.menuapp.exception.ResourceAlreadyExistsException;
 import com.alsa.menuapp.exception.ResourceNotFoundException;
 import com.alsa.menuapp.exception.UpdateFaildeException;
 import com.alsa.menuapp.model.Status;
@@ -43,6 +44,12 @@ public class StatusService {
 
     public Status saveStatus(Status status){
         log.info("saving new status: {}", status);
+        Status existsStatus = statusRepo.getByName(status.getName());
+        if(existsStatus != null){
+            log.error("status category with name: {} already exists", status.getName());
+            throw new ResourceAlreadyExistsException("status already exists");
+        }
+
         return statusRepo.save(status);
     }
 

@@ -7,5 +7,5 @@ import com.alsa.menuapp.model.PlateCategory;
 
 @Repository
 public interface PlateCategoryRepository extends JpaRepository<PlateCategory, Integer>{
-    
+    PlateCategory findByName(String name);
 }

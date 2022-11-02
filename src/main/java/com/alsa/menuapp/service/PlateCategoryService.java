@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
-
+import com.alsa.menuapp.exception.ResourceAlreadyExistsException;
 import com.alsa.menuapp.exception.ResourceNotFoundException;
 import com.alsa.menuapp.exception.UpdateFaildeException;
 import com.alsa.menuapp.model.PlateCategory;
@@ -44,6 +44,12 @@ public class PlateCategoryService {
 
     public PlateCategory savePlateCategory(PlateCategory category){
         log.info("saving new plate category: {}", category);
+        PlateCategory existsCategory = categoryRepo.findByName(category.getName());
+        if(existsCategory != null){
+            log.error("plate category with name: {} already exists", category.getName());
+            throw new ResourceAlreadyExistsException("plate already exists");
+        }
+
         return categoryRepo.save(category);
     }
 

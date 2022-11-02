@@ -23,39 +23,39 @@ import com.alsa.menuapp.service.OrderService;
 @RestController
 @RequestMapping("/api/restaurant/orders")
 public class OderController {
-    @Autowired
-    OrderService oService;
+  @Autowired
+  OrderService oService;
 
-    @GetMapping()
-    @Description(value = "returns a list of all orders")
-    public ResponseEntity<List<Order>> getAllBills() {
-      return ResponseEntity.ok().body(oService.getAllOrders());
-    }
+  @GetMapping()
+  @Description(value = "returns a list of all orders")
+  public ResponseEntity<List<Order>> getAllBills() {
+    return ResponseEntity.ok().body(oService.getAllOrders());
+  }
 
-    @GetMapping("/{id}")
-    @Description(value = "returns order by its id")
-    public ResponseEntity<Order> getBill(@PathVariable int id) {
-      return ResponseEntity.ok().body(oService.getOrder(id));
-    }
+  @GetMapping("/{id}")
+  @Description(value = "returns order by its id")
+  public ResponseEntity<Order> getBill(@PathVariable int id) {
+    return ResponseEntity.ok().body(oService.getOrder(id));
+  }
 
-    @PostMapping()
-    @Description(value = "saves a new order given a order by the body")
-    public ResponseEntity<Order> saveBill(@RequestBody Order order) {
-      URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/restaurant/orders").toUriString());
-      return ResponseEntity.created(uri).body(oService.saveOrder(order));
-    }
+  @PostMapping()
+  @Description(value = "saves a new order given a order by the body")
+  public ResponseEntity<Order> saveBill(@RequestBody Order order) {
+    URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/restaurant/orders").toUriString());
+    return ResponseEntity.created(uri).body(oService.saveOrder(order));
+  }
 
-    @PutMapping("/{id}")
-    @Description(value = "updates order given a order by the body")
-    public ResponseEntity<Order> updateBill(@PathVariable int id, @RequestBody Map<Object, Object> fields) {
-        return ResponseEntity.ok().body(oService.updateOrder(id, fields));
-    }
+  @PutMapping("/{id}")
+  @Description(value = "updates order given a order by the body")
+  public ResponseEntity<Order> updateBill(@PathVariable int id, @RequestBody Map<Object, Object> fields) {
+      return ResponseEntity.ok().body(oService.updateOrder(id, fields));
+  }
 
-    @DeleteMapping("/{id}")
-    @Description(value = "deletes a order given an id by path variable")
-    public ResponseEntity<Integer> deleteBill(@PathVariable int id) {
-        oService.deleteOrder(id);
-        return ResponseEntity.ok().body(id);
-    }
+  @DeleteMapping("/{id}")
+  @Description(value = "deletes a order given an id by path variable")
+  public ResponseEntity<Integer> deleteBill(@PathVariable int id) {
+      oService.deleteOrder(id);
+      return ResponseEntity.ok().body(id);
+  }
 
 }

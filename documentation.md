@@ -1,8 +1,30 @@
-$$
-**# Documentación de API v1.0.0**
-$$
+# Documentación de API v1.0.0
 
-*********************************************************************
+*************************************************************
+
+# Login (Authentication)
+
+**POST:**
+description: *logins a user given his credential*
+
+request: "api/login"
+	body: {
+		username: "username",
+		password: "1234"
+	}
+	notes: enviar las credenciales en un body tipo "form-encode"
+
+response:
+	status: 200
+	headers: {
+		acces_token: "token"
+	}
+
+	status: 403
+
+
+
+*************************************************************
 
 # Model: User
 
@@ -52,7 +74,7 @@ response:
 
 *description: retorna un user por medio de id*
 
-request: "api/users/{$id}"
+request: "api/users/${id}"
 
 responses:
 	status: 200
@@ -70,7 +92,7 @@ responses:
 
 	status: 400
 	body: { 		
-			message: "user with id {$id} does not exists"
+			message: "user with id ${id} does not exists"
 			}
 
 ---------------------------------------------------------------------
@@ -110,7 +132,7 @@ response:
 
 *description: elimina un role de un user*
 
-request: "api/users/{$userId}/roles/${roleId}"
+request: "api/users/${userId}/roles/${roleId}"
 
 responses:
 	status: 200
@@ -252,7 +274,7 @@ request: "api/restaurant/bills"
 response:
 	status: 200
 	body:[
-            { 
+          { 
 		   id: 1, 
 		   date: 14/11/2002, 
 		   ammount: 20.00, 
@@ -260,6 +282,7 @@ response:
 		   table: {
 		     id: 3
 		  },
+		  }
 
 		 { 
 	 	   id: 1, 
@@ -302,7 +325,7 @@ responses:
 
 *description: crea un nuevo registro de una bill*
 
-request: "api/restaurant/bills/"
+request: "api/restaurant/bills"
 	   body: { 
 		ammount: 20.00, 
 		isPaid: true, 
@@ -457,7 +480,7 @@ responses:
 
 *description: crea un nuevo registro de una order*
 
-request: "api/restaurant/orders/"
+request: "api/restaurant/orders"
 	   body: { 
 		   ammount: 20.00, 
 		   chef: {
@@ -622,7 +645,7 @@ responses:
 
 *description: crea un nuevo registro de un plate*
 
-request: "api/restaurant/plates/"
+request: "api/restaurant/plates"
 	   body: { 
 		   name: "lassagna", 
 		   price: 20.00, 
@@ -762,7 +785,7 @@ responses:
 
 *description: crea un nuevo registro de un plateCategory*
 
-request: "api/restaurant/plateCategories/"
+request: "api/restaurant/plateCategories"
 	   body: { 
 		   name: "pastas" 
 		  }
@@ -881,7 +904,7 @@ responses:
 
 *description: crea un nuevo registro de una table*
 
-request: "api/restaurant/tables/"
+request: "api/restaurant/tables"
 	   body: { 
 		   number: 1,
 		   token: "token"
@@ -1001,7 +1024,7 @@ responses:
 
 *description: crea un nuevo registro de una TableSection*
 
-request: "api/restaurant/tableSections/"
+request: "api/restaurant/tableSections"
 	   body: { 
 		   name: "Sección whitexicans"
 		  }
@@ -1108,9 +1131,8 @@ responses:
 
 *description: crea un nuevo registro de un status*
 
-request: "api/restaurant/status/"
-	   body: { 
-		   id: 1, 
+request: "api/restaurant/status"
+	   body: {  
 		   name: "processing"
 		  }
 
@@ -1160,4 +1182,174 @@ responses:
 	status: 400
 	body: { 		
 		   message: "status with id {$id} does not exists"
+	       }
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+# Model: Plate
+
+## Endpoints:
+
+**GET:**
+
+*description: retorna una lista con todas los plates*
+
+request: "api/restaurant/plates"
+
+response:
+	status: 200
+	body:[
+         { 
+		   id: 1, 
+		   name: "Chicken burger"
+		   description: "Chicken burger with french fries",
+		   price: 50.00,
+		   imagePath: "https://image.png",
+		   order:{
+			id: 1
+		   },
+		   category:{
+			id: 3
+		   }
+		  }
+
+         { 
+		   id: 2, 
+		   name: "Beef burger"
+		   description: "Beef burger with french fries",
+		   price: 54.00,
+		   imagePath: "https://image.png",
+		   order:{
+			id: 4
+		   },
+		   category:{
+			id: 3
+		   }
+		 }
+	    ]
+
+----------------------------------------------------------------------
+
+**GET:**
+
+*description: retorna un plate por medio de id*
+
+request: "api/restaurant/plates/{$id}"
+
+responses:
+	status: 200
+	body:{
+		   id: 1, 
+		   name: "Chicken burger"
+		   description: "Chicken burger with french fries",
+		   price: 50.00,
+		   imagePath: "https://image.png",
+		   order:{
+		    id: 1
+		   },
+		   category:{
+		    id: 3
+		   }
+		}
+
+	status: 400
+	body: { 		
+		   message: "plate with id {$id} does not exists"
+	       }
+
+----------------------------------------------------------------------
+
+**POST**
+
+*description: crea un nuevo registro de un plate*
+
+request: "api/restaurant/plates"
+	   body: {
+		   name: "Chicken burger"
+		   description: "Chicken burger with french fries",
+		   price: 50.00,
+		   imagePath: "https://image.png",
+		   order:{
+		    id: 1
+		   },
+		   category:{
+		    id: 3
+		   }
+		}
+
+response:
+	status: 200
+	body:{
+		   id: 1, 
+		   name: "Chicken burger"
+		   description: "Chicken burger with french fries",
+		   price: 50.00,
+		   imagePath: "https://image.png",
+		   order:{
+		    id: 1
+		   },
+		   category:{
+		    id: 3
+		   }
+		}
+
+----------------------------------------------------------------------
+
+**PUT**
+
+*description: acutaliza un registro de un plate por id*
+
+request: "api/restaurant/plates/{$id}"
+	   body: { 
+		   name: "Pork burger"
+		   description: "Pork burger with french fries",
+		   price: 50.00,
+		   imagePath: "https://image.png",
+		   order:{
+		    id: 1
+		   },
+		   category:{
+		    id: 3
+		   }
+		  }
+	   notes: * unicos campos a actualizar son los de ejemplo
+		     * puedes usar actualización parcial por medio del body
+
+responses:
+	status: 200
+	body: { 
+		   id: 1
+		   name: "Pork burger"
+		   description: "Pork burger with french fries",
+		   price: 50.00,
+		   imagePath: "https://image.png",
+		   order:{
+		    id: 1
+		   },
+		   category:{
+		    id: 3
+		   }
+		  }
+
+	status: 400
+	body: { 		
+		    message: "plate with id {$id} does not exists"
+	       }
+
+---------------------------------------------------------------------
+
+**DELETE:**
+
+*description: elimina un registro de un plate por id*
+
+request: "api/restaurant/plates/{$id}"
+
+responses:
+	status: 200
+
+	status: 400
+	body: { 		
+		   message: "plate with id {$id} does not exists"
 	       }

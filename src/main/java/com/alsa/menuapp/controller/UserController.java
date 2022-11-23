@@ -74,6 +74,12 @@ public class UserController{
     return ResponseEntity.ok().build();
   }
 
+  @PostMapping("/tokenLogin")
+  @Description(value = "logins user by token")
+  public ResponseEntity<?> loginByToken(@RequestBody String token) {
+    String newToken = userService.loginByToken(token, "http://localhost:8080/api/users/tokenLogin");
+    return ResponseEntity.ok().body(newToken);
+  }
 }
 
 @Data

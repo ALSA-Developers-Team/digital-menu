@@ -1,11 +1,17 @@
 package com.alsa.menuapp.service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +26,10 @@ import com.alsa.menuapp.model.Role;
 import com.alsa.menuapp.model.User;
 import com.alsa.menuapp.repository.RoleRespository;
 import com.alsa.menuapp.repository.UserRepository;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +42,8 @@ public class UserService implements UserDetailsService{
     private UserRepository userRepo;
     private RoleRespository roleRepo;
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     public UserService(UserRepository userRepo, RoleRespository roleRepo, PasswordEncoder passwordEncoder){
@@ -197,5 +209,33 @@ public class UserService implements UserDetailsService{
     public List<Role> getRoles(){
         log.info("Fethcing all roles");
         return roleRepo.findAll();
+    }
+
+    /**
+     * 
+     * @param token - JWT token
+     */
+    public String loginByToken(String token, String url){
+        String[] parts = token.split("\\.");
+        String payload = decode(parts[1]);
+        JsonObject jsonObject = new JsonParser().parse(payload).getAsJsonObject();
+        log.info("Login by token - User is: {}, password is: {}", jsonObject.get("username"), jsonObject.get("password"));
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(jsonObject.get("username").getAsString(), jsonObject.get("password").getAsString());
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
+        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes()); //no hacer esto xD
+
+        String access_token = JWT.create().withSubject(user.getUsername())
+                                            .withExpiresAt(null)
+                                            .withIssuer(url)
+                                            .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                                            .sign(algorithm);
+        return access_token;
+    }
+
+    private static String decode(String encodedString) {
+        return new String(Base64.getUrlDecoder().decode(encodedString));
     }
 }

@@ -37,7 +37,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         log.info("User is: {}", username); log.info("password is: {}", password);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-
         return authenticationManager.authenticate(authenticationToken);
     }
 
@@ -52,13 +51,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                             .withIssuer(request.getRequestURL().toString())
                                             .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                                             .sign(algorithm);      
-        String refresh_token = JWT.create().withSubject(user.getUsername())
-        .withExpiresAt(null)
-        .withIssuer(request.getRequestURL().toString())
-        .sign(algorithm);
-
-        response.setHeader("acces_token", access_token);
-        response.setHeader("refresh_token", refresh_token);
+        response.addHeader("acces_token", access_token);
     }
     
 }

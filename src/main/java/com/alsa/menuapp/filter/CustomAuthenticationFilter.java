@@ -50,8 +50,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                             .withExpiresAt(null)
                                             .withIssuer(request.getRequestURL().toString())
                                             .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                                            .sign(algorithm);      
-        response.addHeader("acces_token", access_token);
+                                            .sign(algorithm);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().print("{\"access_token\":\""+access_token+"\", \"user\":\""+user.getUsername()+"\", \"roles\":\""+ user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList() +"\"}");
+        response.getWriter().flush();
     }
     
 }

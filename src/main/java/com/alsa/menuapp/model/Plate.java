@@ -35,12 +35,8 @@ public class Plate {
     @Column(name = "price", nullable = false)
     private double price;
 
-    @Column(name = "image_path", nullable = false)
+    @Column(name = "image_path", nullable = false, length = 10485760)
     private String imagePath;
-
-    @ManyToOne
-    @JoinColumn(name="order_id", nullable=false, referencedColumnName = "id")
-    private Order order;
 
     @ManyToOne
     @JoinColumn(name="category_id", nullable=false, referencedColumnName = "id")

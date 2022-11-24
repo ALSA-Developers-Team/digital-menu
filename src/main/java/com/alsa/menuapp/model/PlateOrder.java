@@ -32,4 +32,7 @@ public class PlateOrder {
 
     @Column(name = "plate_id", nullable = false)
     private int plateId;
+
+    @Column(name = "quantity", nullable = false)
+    private int quantity;
 }
